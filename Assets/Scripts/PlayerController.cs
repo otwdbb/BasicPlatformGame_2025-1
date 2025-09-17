@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -9,6 +10,8 @@ public class PlayerController : MonoBehaviour
     //because this is public we have access to it in the unity editor
     public float horizontalMoveSpeed;
     public float jumpForce;
+
+    public GameObject doubleJumpHatLocation;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -81,8 +84,16 @@ public class PlayerController : MonoBehaviour
         //double jump
         if(collision.gameObject.CompareTag("DoubleJump"))
         {
+            GameObject hat = collision.gameObject;
+            equipDoubleJumpHat(hat);
             maxNumJumps = 2;
         }
+    }
+
+    private void equipDoubleJumpHat(GameObject hat)
+    {
+        hat.transform.position = doubleJumpHatLocation.transform.position;
+        hat.gameObject.transform.SetParent(this.gameObject.transform);
     }
 }   
 

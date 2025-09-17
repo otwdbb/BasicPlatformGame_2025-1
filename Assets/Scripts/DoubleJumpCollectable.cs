@@ -7,7 +7,7 @@ public class DoubleJumpCollectable : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Player"))
         {
-            Destroy(this.gameObject);
+            //Destroy(this.gameObject);
         }
     }
 }
