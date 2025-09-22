@@ -9,6 +9,8 @@ TagManager:
   - DoubleJump
   - WallMoveLeftBound
   - WallMoveRightBound
+  - ob
+  - obBottom
   layers:
   - Default
   - TransparentFX

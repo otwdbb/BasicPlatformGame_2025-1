@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -72,9 +73,13 @@ public class PlayerController : MonoBehaviour
     {
         //collision will contain information about the object that the player collided with 
         //Debug.Log(collision.gameObject);
-        if(collision.gameObject.CompareTag("Ground"))
+        if (collision.gameObject.CompareTag("Ground"))
         {
             numJumps = 1;
+        }
+        else if (collision.gameObject.CompareTag("obBottom"))
+        {
+            SceneManager.LoadScene("SampleScene");
         }
     }
 
