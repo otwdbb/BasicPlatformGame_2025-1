@@ -13,12 +13,14 @@ public class PlayerController : MonoBehaviour
     public float jumpForce;
 
     public GameObject doubleJumpHatLocation;
+    public GameObject BootLocation;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         //I can only get this component becuase the rigidbody2d is attached to the player
         //this script is also attached to the player
         rb = GetComponent<Rigidbody2D>();
+        
 
         maxNumJumps = 1;
         numJumps = 1;
@@ -93,12 +95,46 @@ public class PlayerController : MonoBehaviour
             equipDoubleJumpHat(hat);
             maxNumJumps = 2;
         }
+        else if(collision.gameObject.CompareTag("Boots"))
+        {
+            //Debug.Log("Collieded with boots");
+            GameObject boots = collision.gameObject;
+            equipBoots(boots);
+            //we want it to be a regular collider and we want the boots to stand on the ground
+            boots.GetComponent<BoxCollider2D>().isTrigger = false;
+
+            // bool = dash;
+        }
     }
 
     private void equipDoubleJumpHat(GameObject hat)
     {
         hat.transform.position = doubleJumpHatLocation.transform.position;
+        // i want the hat to be a child
         hat.gameObject.transform.SetParent(this.gameObject.transform);
     }
+
+    private void equipBoots(GameObject boots)
+    {
+        //move to where i want
+        boots.transform.position = BootLocation.transform.position;
+        //set to be child and stay with me
+        //i want the hat to be a child
+        boots.gameObject.transform.SetParent(this.gameObject.transform);
+
+
+
+
+        //collided with boots
+        //need to dash or increase speed
+        //public bool to be able to dash
+        //We need a new function called dash
+        //call it in update
+        //look for dash key event - shift
+        // and if the boolean is true
+
+
+    }
+
 }   
 
