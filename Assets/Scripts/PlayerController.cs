@@ -135,6 +135,16 @@ public class PlayerController : MonoBehaviour
 
 
     }
+    private void dash()
+    {
+        //if(Input.GetKeyDown(KeyCode.))
+
+
+
+
+
+
+    }
 
 }   
 
