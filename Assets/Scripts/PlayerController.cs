@@ -5,12 +5,15 @@ using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
     Rigidbody2D rb;
+    //
     private float inputHorizontal;
     private int maxNumJumps;
     private int numJumps;
     //because this is public we have access to it in the unity editor
     public float horizontalMoveSpeed;
     public float jumpForce;
+   
+    public bool canDash = false;
 
     public GameObject doubleJumpHatLocation;
     public GameObject BootLocation;
@@ -67,6 +70,11 @@ public class PlayerController : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
             numJumps++;
         }
+    }
+
+   private void dash()
+    {
+
     }
 
 
@@ -135,16 +143,6 @@ public class PlayerController : MonoBehaviour
 
 
     }
-    private void dash()
-    {
-        //if(Input.GetKeyDown(KeyCode.))
-
-
-
-
-
-
-    }
-
+ 
 }   
 
