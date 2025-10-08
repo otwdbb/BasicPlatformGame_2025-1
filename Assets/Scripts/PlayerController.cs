@@ -1,9 +1,11 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;              // needed for IEnumerator + coroutines
 
 public class PlayerController : MonoBehaviour
 {
+
     Rigidbody2D rb;
     //
     private float inputHorizontal;
@@ -13,10 +15,41 @@ public class PlayerController : MonoBehaviour
     public float horizontalMoveSpeed;
     public float jumpForce;
    
-    public bool canDash = false;
+   // public bool canDash = false;
 
     public GameObject doubleJumpHatLocation;
     public GameObject BootLocation;
+
+
+    // Dash (locked until you grab Boots)
+    public bool canDash = false;                 // stays false until Boots pickup
+    public KeyCode dashKey = KeyCode.LeftShift;  // key to dash
+    public float dashSpeed = 18f;                // horizontal burst speed
+    public float dashTime = 0.15f;               // how long the burst lasts
+    public float dashCooldown = 0.6f;            // cooldown between dashes
+
+    private bool isDashing = false;
+    private float nextDashTime = 0f;
+    private int facing = 1; // 1 = right, -1 = left
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -32,8 +65,29 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        movePlayerLateral();
-        jump();
+        if (!isDashing)
+        {
+            movePlayerLateral();
+            jump();
+        }
+
+        // 2) Start a dash only if:
+        //    - you've unlocked it (canDash)
+        //    - you're not already dashing
+        //    - the cooldown has expired
+        //    - the dash key was just pressed
+        if (canDash && !isDashing && Time.time >= nextDashTime && Input.GetKeyDown(dashKey))
+        {
+            StartCoroutine(DashRoutine()); 
+        }
+
+
+        
+
+
+
+        //movePlayerLateral();
+        //jump();
     }
 
     private void movePlayerLateral()
@@ -52,14 +106,28 @@ public class PlayerController : MonoBehaviour
     private void flipPlayerSprite(float inputHorizontal)
     {
         //this is how we will make the player face the direction they are moving
-        if (inputHorizontal > 0)
+        //if (inputHorizontal > 0)
+        //{
+        //    transform.eulerAngles = new Vector3(0, 0, 0);
+        //}
+        //else if (inputHorizontal < 0)
+        //{
+        //    transform.eulerAngles = new Vector3(0, 180, 0);
+        //}
+
+        // face right
+
+        if (inputHorizontal > 0f)
         {
-            transform.eulerAngles = new Vector3(0, 0, 0);
+            transform.eulerAngles = new Vector3(0f, 0f, 0f);
+            facing = 1;
         }
-        else if (inputHorizontal < 0)
+        else if (inputHorizontal < 0f)
         {
-            transform.eulerAngles = new Vector3(0, 180, 0);
+            transform.eulerAngles = new Vector3(0f, 180f, 0f);
+            facing = -1;
         }
+        // if 0f, keep current facing
 
     }
 
@@ -72,10 +140,26 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-   private void dash()
+    private IEnumerator DashRoutine()
     {
+        isDashing = true;
 
+        // Pause gravity for a clean horizontal burst
+        float oldGravity = rb.gravityScale;
+        rb.gravityScale = 0f;
+
+        
+        rb.linearVelocity = new Vector2(facing * dashSpeed, 0f);
+
+        yield return new WaitForSeconds(dashTime);
+
+        // Restore physics and set cooldown
+        rb.gravityScale = oldGravity;
+        isDashing = false;
+        nextDashTime = Time.time + dashCooldown;
     }
+
+  
 
 
     //Collisions
@@ -109,7 +193,18 @@ public class PlayerController : MonoBehaviour
             GameObject boots = collision.gameObject;
             equipBoots(boots);
             //we want it to be a regular collider and we want the boots to stand on the ground
-            boots.GetComponent<BoxCollider2D>().isTrigger = false;
+            //boots.GetComponent<BoxCollider2D>().isTrigger = false;
+
+            canDash = true;
+
+            // 3) Stop the equipped boots from colliding or simulating physics
+            var col = boots.GetComponent<Collider2D>();
+            if (col) col.enabled = false;
+
+            var rb2 = boots.GetComponent<Rigidbody2D>();
+            if (rb2) rb2.simulated = false;
+
+
 
             // bool = dash;
         }
